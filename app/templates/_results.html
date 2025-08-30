@@ -1,0 +1,25 @@
+{% if hits and hits|length > 0 %}
+  <ul class="result-list">
+    {% for item in hits %}
+      <li class="result-item">
+        {% if item.image_url %}
+          <img class="thumb" src="{{ item.image_url }}" alt="" />
+        {% endif %}
+        <div class="meta">
+          <h3 class="title"><a href="{{ item.url or '#' }}" target="_blank" rel="noopener noreferrer">{{ item.title }}</a></h3>
+          {% if item.category %}
+            <div class="category">{{ item.category }}</div>
+          {% endif %}
+          {% if item.description %}
+            <p class="desc">{{ item.description }}</p>
+          {% endif %}
+          {% if item.price is not none %}
+            <div class="price">${{ '%.2f'|format(item.price) }}</div>
+          {% endif %}
+        </div>
+      </li>
+    {% endfor %}
+  </ul>
+{% else %}
+  
+{% endif %}

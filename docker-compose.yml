@@ -1,0 +1,50 @@
+services:
+  es:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.17
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+    ports:
+      - "9200:9200"
+    volumes:
+      - esdata:/usr/share/elasticsearch/data
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.17.17
+    environment:
+      - ELASTICSEARCH_HOSTS=http://es:9200
+    ports:
+      - "5601:5601"
+    depends_on:
+      - es
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - ELASTICSEARCH_URL=http://es:9200
+      - ES_INDEX=products
+    ports:
+      - "8000:8000"
+    depends_on:
+      - es
+    restart: on-failure
+    volumes:
+      - ./app:/app/app:ro
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload --proxy-headers --forwarded-allow-ips "*"
+
+  scraper:
+    build:
+      context: .
+      dockerfile: Dockerfile.scraper
+    environment:
+      - ELASTICSEARCH_URL=http://es:9200
+      - ES_INDEX=products
+    depends_on:
+      - es
+
+volumes:
+  esdata:
+    driver: local

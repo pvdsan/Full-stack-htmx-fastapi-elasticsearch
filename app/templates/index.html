@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block body_class %}{% if not q %}page-home{% endif %}{% endblock %}
+
+{% block content %}
+  {% if not q %}
+    <section class="hero" aria-label="nibbins search">
+      <h1 class="logo">nibbins</h1>
+      <form class="search-form hero-form" action="/" method="get">
+        <input
+          type="search"
+          name="q"
+          placeholder="Search nibbs"
+          value=""
+          autofocus
+          aria-label="Search nibbs"
+          hx-get="/search"
+          hx-target="#results"
+          hx-trigger="input changed delay:250ms, search"
+        />
+      </form>
+    </section>
+  {% else %}
+    <section class="search search--compact">
+      <form class="search-form" action="/" method="get">
+        <input
+          type="search"
+          name="q"
+          placeholder="Search nibbs"
+          value="{{ q }}"
+          autofocus
+          aria-label="Search nibbs"
+          hx-get="/search"
+          hx-target="#results"
+          hx-trigger="input changed delay:250ms, search"
+        />
+      </form>
+    </section>
+  {% endif %}
+
+  <section id="results" class="results" aria-live="polite">
+    {% include "_results.html" with context %}
+  </section>
+{% endblock %}
