@@ -27,7 +27,7 @@ services:
       - ELASTICSEARCH_URL=http://es:9200
       - ES_INDEX=products
     ports:
-      - "8000:8000"
+      - "8001:8000"
     depends_on:
       - es
     restart: on-failure
